@@ -1,0 +1,15 @@
+default: &default
+  adapter: mysql2
+  host: localhost
+  port: 3036
+  username: root
+  password: alpen101
+  encoding: utf8
+
+development:
+  <<: *default
+  database: loyalty-service_development
+
+test:
+  <<: *default
+  database: loyalty-service_test

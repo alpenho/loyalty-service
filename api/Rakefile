@@ -1,0 +1,11 @@
+require 'pry'
+require 'sinatra/activerecord/rake'
+require './app'
+
+# establishes the name of the rake option: console
+task :console do
+  # turns on logging of SQL queries while in the task
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
+  # starts a Ruby REPL session
+  Pry.start
+end
