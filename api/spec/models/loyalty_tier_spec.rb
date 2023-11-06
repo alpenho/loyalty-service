@@ -120,4 +120,75 @@ describe LoyaltyTier do
       expect(loyalty_tier.calculate_amount_needed_next_year).to eql(36530)
     end
   end
+
+  context '.upsert_loyalty_tier' do
+    let!(:customer_id) { 'customer_id_1' }
+    let!(:last_year) { Time.now.year - 1 }
+    let!(:completed_order_1) {
+      CompletedOrder.new(
+        customer_id: customer_id,
+        customer_name: 'customer_name_1',
+        order_id: 'order_id_1',
+        total_in_cents: 3450,
+        completed_at: "#{last_year}-03-04T05:29:59.850Z"
+      )
+    }
+    let!(:completed_order_2) {
+      CompletedOrder.new(
+        customer_id: customer_id,
+        customer_name: 'customer_name_1',
+        order_id: 'order_id_2',
+        total_in_cents: 5350,
+        completed_at: "#{last_year}-03-05T05:29:59.850Z"
+      )
+    }
+    let!(:completed_order_3) {
+      CompletedOrder.new(
+        customer_id: customer_id,
+        customer_name: 'customer_name_1',
+        order_id: 'order_id_3',
+        total_in_cents: 4670,
+        completed_at: "#{last_year}-01-05T05:29:59.850Z"
+      )
+    }
+
+    before do
+      completed_order_1.save
+      completed_order_2.save
+      completed_order_3.save
+    end
+
+    context 'when no loyalty tier for customer last year' do
+      it 'should created loyalty tier for last year' do
+        described_class.upsert_loyalty_tier(customer_id)
+        loyalty_tiers = described_class.where(customer_id: customer_id, year: last_year)
+        expect(loyalty_tiers).to exist
+        expect(loyalty_tiers.first.total_in_cents).to eql(13470)
+      end
+    end
+
+    context 'when loyalty tier for customer last year already exist' do
+      let!(:completed_order_4) {
+        CompletedOrder.new(
+          customer_id: customer_id,
+          customer_name: 'customer_name_1',
+          order_id: 'order_id_4',
+          total_in_cents: 5370,
+          completed_at: "#{last_year}-01-05T05:29:59.850Z"
+        )
+      }
+
+      before do
+        described_class.upsert_loyalty_tier(customer_id)
+        completed_order_4.save
+      end
+
+      it 'should update loyalty tier for last year' do
+        described_class.upsert_loyalty_tier(customer_id)
+        loyalty_tiers = described_class.where(customer_id: customer_id, year: last_year)
+        expect(loyalty_tiers).to exist
+        expect(loyalty_tiers.first.total_in_cents).to eql(18840)
+      end
+    end
+  end
 end
