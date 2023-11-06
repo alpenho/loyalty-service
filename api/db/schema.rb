@@ -13,21 +13,19 @@
 ActiveRecord::Schema[7.1].define(version: 2023_11_01_092659) do
   create_table "completed_orders", charset: "utf8", force: :cascade do |t|
     t.string "order_id"
-    t.integer "customer_id"
+    t.string "customer_id"
     t.string "customer_name"
-    t.float "total_in_cents"
+    t.integer "total_in_cents"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "loyalty_tiers", charset: "utf8", force: :cascade do |t|
-    t.integer "customer_id"
-    t.string "customer_name"
-    t.float "total"
-    t.date "start_date"
-    t.date "end_date"
-    t.integer "tier"
+    t.string "customer_id"
+    t.integer "total_in_cents"
+    t.integer "year"
+    t.integer "tier", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
