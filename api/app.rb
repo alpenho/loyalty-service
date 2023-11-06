@@ -1,7 +1,3 @@
-require 'sinatra'
-require 'sinatra/activerecord'
-require 'rack/contrib'
-
 ActiveRecord::Base.configurations = YAML.safe_load_file('config/database.yml', aliases: true)
 ActiveRecord::Base.establish_connection(:development)
 

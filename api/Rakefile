@@ -1,5 +1,6 @@
 require 'pry'
 require 'sinatra/activerecord/rake'
+require './config/environment'
 require './app'
 
 # establishes the name of the rake option: console
